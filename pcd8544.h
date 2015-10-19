@@ -1,6 +1,6 @@
 /*
  * pcd8544.cpp
- *
+ * Sterownik obsługi wyświetlacza monochromatycznego
  *  Created on: 2 kwi 2015
  *      Author: dicker
  */
