@@ -43,19 +43,30 @@ enum USART_CHAR_SIZE
 
 // funkcja poniżej tylko inicjuje usart; nie włącza odbiornika/nadajnika!
 void usart_init(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
-				USART_PARITY parity = USART_PARITY_NONE,
-				uint8_t stopbits = USART_STOP_BITS_ONE,
-				USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
+		USART_PARITY parity = USART_PARITY_NONE,
+		uint8_t stopbits = USART_STOP_BITS_ONE,
+		USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
 
 void usart_send_byte(uint8_t data) ;	// wysłanie bajtu danych
 uint8_t usart_read() ;	// tak długo czeka, aż odczyta bajt
 void usart_send_word(uint16_t data) ;	// wysłanie słowa
 bool usart_check_errors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
+bool is_received() ;	// sprawdza, czy do bufora dostały się dane
+
+#ifdef __AVR_ATmega328P__
+	#define UCSRB 	UCSR0B
+	#define UCSRA 	UCSR0A
+	#define UCSRC 	UCSR0C
+	#define RXEN 	RXEN0
+	#define TXEN 	TXEN0
+	#define RXCIE	RXCIE0
+	#define TXCIE	TXCIE0
+#endif
 
 #define usart_rx_enable() 	UCSRB |= (1 << RXEN) ;
 #define usart_rx_disable() 	UCSRB &= ~(1 << RXEN) ;
 #define usart_tx_enable()	UCSRB |= (1 << TXEN) ;
-#define usart_tx_disable()  UCSRB &= ~(1 << TXEN) ;
+#define usart_tx_disable()  	UCSRB &= ~(1 << TXEN) ;
 
 #define usart_rxc_interrupt_disable()	UCSRB &= ~(1 << RXCIE)
 #define usart_rxc_interrupt_enable()	UCSRB |= (1 << RXCIE)
