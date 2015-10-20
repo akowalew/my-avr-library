@@ -49,7 +49,7 @@ void usart_init(USART_CHAR_SIZE bits ,
 	UCSRC =  (1 << URSEL) | 
 		(parity << UPM0) |
 		(stopbits << USBS) |
-		(mode << UMSEL0) |
+		(mode << UMSEL) |
 		((bits & 0x03) << UCSZ0) ;
 	#if USE_2X
 		UCSRA |= (1 << U2X) ;
@@ -111,7 +111,7 @@ bool is_received()
 #ifdef __AVR_ATmega328P__
 	return UCSRA & (1 << RXC0));
 #else
-	return UCSRA & (1 << RXC)) ;
+	return UCSRA & (1 << RXC) ;
 #endif
 }
 
