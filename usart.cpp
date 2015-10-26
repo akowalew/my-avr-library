@@ -9,7 +9,11 @@
 #include <avr/interrupt.h>
 #include "usart.h"
 
-void usart_init(USART_CHAR_SIZE bits ,
+namespace Usart
+{
+
+
+void initUsart(USART_CHAR_SIZE bits ,
 				USART_PARITY parity,
 				uint8_t stopbits,
 				USART_MODE mode)
@@ -61,9 +65,11 @@ void usart_init(USART_CHAR_SIZE bits ,
 		UCSRB |= (1 << UCSZ2) ;
 #endif
 
+	rxEnable() ;
+	txEnable() ;
 }
 
-void usart_send_byte(uint8_t data)
+void sendByte (uint8_t data)
 {
 #ifdef __AVR_ATmega328P__
 	while(!(UCSRA & (1 << UDRE0))) ;
@@ -74,7 +80,7 @@ void usart_send_byte(uint8_t data)
 #endif
 }
 
-uint8_t usart_read()
+uint8_t readByte()
 {
 #ifdef __AVR_ATmega328P__
 	while(!(UCSRA & (1 << RXC0))) ;
@@ -85,13 +91,13 @@ uint8_t usart_read()
 #endif
 }
 
-void usart_send_word(uint16_t data)
+void sendWord(uint16_t data)
 {
-	usart_send_byte(data >> 8) ;
-	usart_send_byte(data) ;
+	sendByte(data >> 8) ;
+	sendByte(data) ;
 }
 
-bool usart_check_errors()
+bool checkErrors()
 {
 #ifdef __AVR_ATmega328P__
 	if((UCSRA & (1 << FE0)) || (UCSRA & (1 << DOR0)) || (UCSRA & (1 << UPE0)))
@@ -106,12 +112,40 @@ bool usart_check_errors()
 #endif
 }
 
-bool is_received() 
+bool isReceived()
 {
 #ifdef __AVR_ATmega328P__
-	return UCSRA & (1 << RXC0));
+	return UCSRA & (1 << RXC0);
 #else
 	return UCSRA & (1 << RXC) ;
 #endif
 }
 
+
+bool readLine(char *destination, uint8_t maxLen)
+{
+	char c ;
+	for(uint8_t i = 0 ; i < maxLen-1 ; i++)
+	{
+		c = readByte() ;
+		if(c == '\0' || c == '\n')
+		{
+			destination[i] = '\0' ;
+			return true ;
+		}
+		destination[i] = c ;
+	}
+	destination[maxLen-1] = '\0' ;
+	return false ;
+}
+
+void sendLine(const char *source)
+{
+	while(*source)
+	{
+		sendByte(*source) ;
+		source++ ;
+	}
+}
+
+}

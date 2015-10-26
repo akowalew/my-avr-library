@@ -10,6 +10,9 @@
 
 #include <avr/io.h>
 
+namespace Usart
+{
+
 enum USART_MODE
 {
 	USART_MODE_ASYNCHRONOUS = 0,
@@ -42,16 +45,18 @@ enum USART_CHAR_SIZE
 // #define USE_2X
 
 // funkcja poniżej tylko inicjuje usart; nie włącza odbiornika/nadajnika!
-void usart_init(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
+void initUsart(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
 		USART_PARITY parity = USART_PARITY_NONE,
 		uint8_t stopbits = USART_STOP_BITS_ONE,
 		USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
 
-void usart_send_byte(uint8_t data) ;	// wysłanie bajtu danych
-uint8_t usart_read() ;	// tak długo czeka, aż odczyta bajt
-void usart_send_word(uint16_t data) ;	// wysłanie słowa
-bool usart_check_errors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
-bool is_received() ;	// sprawdza, czy do bufora dostały się dane
+void sendLine(const char *source) ;
+bool readLine(char *dest, uint8_t maxx) ;
+void sendByte(uint8_t data) ;	// wysłanie bajtu danych
+uint8_t readByte() ;	// tak długo czeka, aż odczyta bajt
+void sendWord(uint16_t data) ;	// wysłanie słowa
+bool checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
+bool isReceived() ;	// sprawdza, czy do bufora dostały się dane
 
 #ifdef __AVR_ATmega328P__
 	#define UCSRB 	UCSR0B
@@ -63,16 +68,24 @@ bool is_received() ;	// sprawdza, czy do bufora dostały się dane
 	#define TXCIE	TXCIE0
 #endif
 
-#define usart_rx_enable() 	UCSRB |= (1 << RXEN) ;
-#define usart_rx_disable() 	UCSRB &= ~(1 << RXEN) ;
-#define usart_tx_enable()	UCSRB |= (1 << TXEN) ;
-#define usart_tx_disable()  	UCSRB &= ~(1 << TXEN) ;
+inline void rxEnable() 	{UCSRB |= (1 << RXEN) ;}
+inline void rxDisable() {UCSRB &= ~(1 << RXEN) ;}
+inline void txEnable()	{UCSRB |= (1 << TXEN) ;}
+inline void txDisable()	{UCSRB &= ~(1 << TXEN) ; }
 
-#define usart_rxc_interrupt_disable()	UCSRB &= ~(1 << RXCIE)
-#define usart_rxc_interrupt_enable()	UCSRB |= (1 << RXCIE)
-#define usart_txc_interrupt_disable()	UCSRB &= ~(1 << TXCIE)
-#define usart_txc_interrupt_enable()	UCSRB |= (1 << TXCIE)
-#define usart_udr_interrupt_disable()	UCSRB &= ~(1 << UDRIE)
-#define usart_udr_interrupt_enable()	UCSRB |= (1 << UDRIE)
+inline void rxIntDisable()	{UCSRB &= ~(1 << RXCIE);}
+inline void rxIntEnable()	{UCSRB |= (1 << RXCIE);}
+inline void txIntDisable()	{UCSRB &= ~(1 << TXCIE);}
+inline void txIntEnable()	{UCSRB |= (1 << TXCIE);}
 
+#ifdef __AVR_ATmega328P__
+inline void udrIntDisable()	{UCSRB &= ~(1 << UDRIE0);}
+inline void udrIntEnable()	{UCSRB |= (1 << UDRIE0);}
+#else
+inline void udrIntDisable()	{UCSRB &= ~(1 << UDRIE);}
+inline void udrIntEnable()	{UCSRB |= (1 << UDRIE);}
+#endif
+
+
+}
 #endif /* USART_H_ */
