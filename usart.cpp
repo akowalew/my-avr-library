@@ -7,6 +7,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 #include "usart.h"
 
 namespace Usart
@@ -146,6 +147,22 @@ void sendLine(const char *source)
 		sendByte(*source) ;
 		source++ ;
 	}
+	sendByte('\n') ;
+}
+
+void sendLineP(const char *strP)
+{
+	char c ;
+
+	while(1)
+	{
+		c = pgm_read_byte(strP++) ;
+		if(c == '\0')
+			break ;
+		else
+			sendByte(c) ;
+	}
+	sendByte('\n') ;
 }
 
 }

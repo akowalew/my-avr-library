@@ -58,6 +58,8 @@ void sendWord(uint16_t data) ;	// wysłanie słowa
 bool checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
 bool isReceived() ;	// sprawdza, czy do bufora dostały się dane
 
+void sendLineP(const char strP[]) ;
+
 #ifdef __AVR_ATmega328P__
 	#define UCSRB 	UCSR0B
 	#define UCSRA 	UCSR0A
