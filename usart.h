@@ -41,6 +41,9 @@ enum USART_CHAR_SIZE
 	USART_CHAR_SIZE_9 = 7
 };
 
+#define BUFF_IN_SZ	60
+#define BUFF_OUT_SZ	60
+
 #define BAUD 9600
 // #define USE_2X
 
@@ -51,6 +54,8 @@ void initUsart(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
 		USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
 
 void sendLine(const char *source) ;
+void sendString(const char *source) ;
+
 bool readLine(char *dest, uint8_t maxx) ;
 void sendByte(uint8_t data) ;	// wysłanie bajtu danych
 uint8_t readByte() ;	// tak długo czeka, aż odczyta bajt
@@ -59,6 +64,7 @@ bool checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
 bool isReceived() ;	// sprawdza, czy do bufora dostały się dane
 
 void sendLineP(const char strP[]) ;
+void sendStringP(const char *strP) ;
 
 #ifdef __AVR_ATmega328P__
 	#define UCSRB 	UCSR0B
@@ -87,6 +93,7 @@ inline void udrIntEnable()	{UCSRB |= (1 << UDRIE0);}
 inline void udrIntDisable()	{UCSRB &= ~(1 << UDRIE);}
 inline void udrIntEnable()	{UCSRB |= (1 << UDRIE);}
 #endif
+
 
 
 }

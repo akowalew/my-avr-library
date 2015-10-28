@@ -9,6 +9,15 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "usart.h"
+#include <ctype.h>
+
+volatile uint8_t buffIn[BUFF_IN_SZ] ;
+volatile uint8_t buffOut[BUFF_OUT_SZ] ;
+
+volatile uint8_t buffInPointer,
+				 buffOutPointer ;
+
+
 
 namespace Usart
 {
@@ -129,7 +138,7 @@ bool readLine(char *destination, uint8_t maxLen)
 	for(uint8_t i = 0 ; i < maxLen-1 ; i++)
 	{
 		c = readByte() ;
-		if(c == '\0' || c == '\n')
+		if(!isprint(c))
 		{
 			destination[i] = '\0' ;
 			return true ;
@@ -150,6 +159,15 @@ void sendLine(const char *source)
 	sendByte('\n') ;
 }
 
+void sendString(const char *source)
+{
+	while(*source)
+	{
+		sendByte(*source) ;
+		source++ ;
+	}
+}
+
 void sendLineP(const char *strP)
 {
 	char c ;
@@ -163,6 +181,21 @@ void sendLineP(const char *strP)
 			sendByte(c) ;
 	}
 	sendByte('\n') ;
+}
+
+
+void sendStringP(const char *strP)
+{
+	char c ;
+
+	while(1)
+	{
+		c = pgm_read_byte(strP++) ;
+		if(c == '\0')
+			break ;
+		else
+			sendByte(c) ;
+	}
 }
 
 }
