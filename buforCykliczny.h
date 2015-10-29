@@ -12,52 +12,59 @@ typedef unsigned char uint8_t ;
 
 template<typename Typ, uint8_t SZ> class BuforCykliczny
 { // SZ - koniecznie potęga dwójki!
-	Typ buff[SZ] ;
-	uint8_t i, j ;
+	volatile Typ buff[SZ] ;
+	volatile uint8_t i, j ;
 	static const uint8_t MASKA = SZ-1 ;
+	volatile Typ lastAdd ;
+
+	volatile bool czyPusty, czyPelny ;
 
 	// i - wskaźnik do wstawiania
 	// j - wskaźnik do wyjmowania
 
 public :
 
-	bool wstaw(Typ data)
-	{
-		if(!czyPelny())
-		{
+	bool push(Typ data) {
+		if(!isFull()) {
 			buff[i] = data ;
 			i = (i+1) & MASKA ;
+			czyPusty = false ;
+			if( i == j )
+				czyPelny = true ;
+
+			lastAdd = data ;
 			return true ;
 		}
-
 		return false ;
 	}
 
-	bool wyjmij(Typ &dest)
-	{
-		if(!czyPusty())
-		{
+	bool pop(volatile Typ *dest) {
+		if(!isEmpty()) {
 			*dest = buff[j] ;
 			j = (j+1) & MASKA ;
+
+			czyPelny = false ;
+			if(i == j)
+				czyPusty = true ;
 			return true ;
 		}
 
 		return false ;
 	}
-	bool czyPusty() const
-	{
-		// pusty jest, gdy oba wskaźniki wskazują na to samo miejsce
-		// czyli, że wskażnik j cofnął się aż do
-		return i == j ;
+
+	bool isFull() const {
+		return czyPelny ;
 	}
-	bool czyPelny() const
-	{
-		// nie możemy wstawić więcej, czyli i wskazuje na pozycję
-		// jeden mniejszą niż j
-		return ((j-1) & MASKA) == i ;
+	bool isEmpty() const {
+		return czyPusty ;
 	}
 
-	BuforCykliczny() : i(0), j(0) { }
+	Typ seeLastAdded() const {
+		return lastAdd ;
+	}
+
+	BuforCykliczny() : i(0), j(0) , czyPusty(true), czyPelny(false) { }
+
 };
 
 
