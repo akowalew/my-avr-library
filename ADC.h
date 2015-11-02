@@ -49,15 +49,13 @@ namespace Adc
 	};
 
 	void adcInit(	V_REF v_ref = VREF_AVCC,
-					PRESCALER ps = PS_2,
-					bool toLeft = false) ;
+			PRESCALER ps = PS_2,
+			bool toLeft = false) ;
 
 	void setAutoTrigger(bool isSet, ADC_AUTO_TRIGGER_SRC src) ;
 	void selectChannel(uint8_t channel) ;
 	void waitForEnd() ;
 	uint16_t getResult() ;
-
-
 
 	inline void intEnable() 		{ ADCSRA |= (1 << ADIE) ; }
 	inline void intDisable() 		{ ADCSRA &= ~(1 << ADIE) ; }
