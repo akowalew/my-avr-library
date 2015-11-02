@@ -6,12 +6,9 @@
  */
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
-#include "usart.h"
-#include <ctype.h>
 
-#include "buforCykliczny.h"
+#include "usart.h"
 
 namespace Usart
 {
@@ -82,6 +79,12 @@ namespace Usart
 	#endif
 	}
 
+	void sendWord(uint16_t data)
+	{
+		sendByte(data >> 8) ;
+		sendByte(data) ;
+	}
+
 	uint8_t readByte()
 	{
 	#ifdef __AVR_ATmega328P__
@@ -93,11 +96,7 @@ namespace Usart
 	#endif
 	}
 
-	void sendWord(uint16_t data)
-	{
-		sendByte(data >> 8) ;
-		sendByte(data) ;
-	}
+
 
 	bool checkErrors()
 	{
@@ -129,7 +128,7 @@ namespace Usart
 		for(uint8_t i = 0 ; i < maxLen-1 ; i++)
 		{
 			c = readByte() ;
-			if(!isprint(c)) // spacja + znaki drukowane
+			if(c == '\0' || c == '\n') // spacja + znaki drukowane
 			{
 				destination[i] = '\0' ;
 				return true ;
@@ -140,36 +139,10 @@ namespace Usart
 		return false ;
 	}
 
-	void sendLine(const char *source)
-	{
-		while(*source)
-		{
-			sendByte(*source) ;
-			source++ ;
-		}
-		sendByte('\n') ;
-	}
-
 	void sendString(const char *source)
 	{
-		while(*source)
-		{
+		while(*source) {
 			sendByte(*(source)++) ;
-		}
-		sendByte('\n') ;
-	}
-
-	void sendLineP(const char *strP)
-	{
-		char c ;
-
-		while(1)
-		{
-			c = pgm_read_byte(strP++) ;
-			if(c == '\0')
-				break ;
-			else
-				sendByte(c) ;
 		}
 		sendByte('\n') ;
 	}
@@ -178,8 +151,7 @@ namespace Usart
 	{
 		char c ;
 
-		while(1)
-		{
+		while(1) {
 			c = pgm_read_byte(strP++) ;
 			if(c == '\0')
 				break ;

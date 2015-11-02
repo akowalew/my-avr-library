@@ -41,9 +41,6 @@ enum USART_CHAR_SIZE
 	USART_CHAR_SIZE_9 = 7
 };
 
-#define BUFF_IN_SZ	60
-#define BUFF_OUT_SZ	60
-
 #define BAUD 9600
 // #define USE_2X
 
@@ -53,18 +50,23 @@ void initUsart(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
 		uint8_t stopbits = USART_STOP_BITS_ONE,
 		USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
 
-void sendLine(const char *source) ;
-void sendString(const char *source) ;
 
-bool readLine(char *dest, uint8_t maxx) ;
-void sendByte(uint8_t data) ;	// wysłanie bajtu danych
-uint8_t readByte() ;	// tak długo czeka, aż odczyta bajt
-void sendWord(uint16_t data) ;	// wysłanie słowa
+
+
+
+
 bool checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
 bool isReceived() ;	// sprawdza, czy do bufora dostały się dane
 
-void sendLineP(const char strP[]) ;
+void sendByte(uint8_t data) ;	// wysłanie bajtu danych
+void sendWord(uint16_t data) ;	// wysłanie słowa
+
+uint8_t readByte() ;	// tak długo czeka, aż odczyta bajt
+
+bool readLine(char *dest, uint8_t maxx) ;	// czyta tak długo, dopóki napotyka znaki drukowane
+
 void sendStringP(const char *strP) ;
+void sendString(const char *source) ;
 
 #ifdef __AVR_ATmega328P__
 	#define UCSRB 	UCSR0B
