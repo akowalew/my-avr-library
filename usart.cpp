@@ -144,7 +144,6 @@ namespace Usart
 		while(*source) {
 			sendByte(*(source)++) ;
 		}
-		sendByte('\n') ;
 	}
 
 	void sendStringP(const char *strP)
@@ -157,7 +156,6 @@ namespace Usart
 				break ;
 			sendByte(c) ;
 		}
-		sendByte('\n') ;
 	}
 
 }
