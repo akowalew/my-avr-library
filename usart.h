@@ -10,60 +10,52 @@
 
 #include <avr/io.h>
 
-namespace Usart
-{
-
-enum USART_MODE
+typedef enum
 {
 	USART_MODE_ASYNCHRONOUS = 0,
 	USART_MODE_SYNCHRONOUS = 1
-};
+} USART_MODE ;
 
-enum USART_PARITY
+typedef enum
 {
 	USART_PARITY_NONE = 0,
 	USART_PARITY_EVEN = 2,
 	USART_PARITY_ODD = 3
-};
+} USART_PARITY;
 
-enum USART_STOP_BITS
+typedef enum
 {
 	USART_STOP_BITS_ONE = 0,
 	USART_STOP_BITS_TWO = 1
-};
+} USART_STOP_BITS ;
 
-enum USART_CHAR_SIZE
+typedef enum
 {
 	USART_CHAR_SIZE_5 = 0,
 	USART_CHAR_SIZE_6 = 1,
 	USART_CHAR_SIZE_7 = 2,
 	USART_CHAR_SIZE_8 = 3,
 	USART_CHAR_SIZE_9 = 7
-};
+} USART_CHAR_SIZE ;
 
 #define BAUD 9600
 // #define USE_2X
 
 // funkcja poniżej tylko inicjuje usart; nie włącza odbiornika/nadajnika!
-void initUsart(USART_CHAR_SIZE bits = USART_CHAR_SIZE_8,
-		USART_PARITY parity = USART_PARITY_NONE,
-		uint8_t stopbits = USART_STOP_BITS_ONE,
-		USART_MODE mode = USART_MODE_ASYNCHRONOUS) ;
+void initUsart(	USART_CHAR_SIZE bits ,
+				USART_PARITY parity ,
+				USART_STOP_BITS stopbits ,
+				USART_MODE mode ) ;
 
-
-
-
-
-
-bool checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
-bool isReceived() ;	// sprawdza, czy do bufora dostały się dane
+uint8_t checkErrors() ;	// sprawdza, czy w transmisji nie wystąpiły błędy
+uint8_t isReceived() ;	// sprawdza, czy do bufora dostały się dane
 
 void sendByte(uint8_t data) ;	// wysłanie bajtu danych
 void sendWord(uint16_t data) ;	// wysłanie słowa
 
 uint8_t readByte() ;	// tak długo czeka, aż odczyta bajt
 
-bool readLine(char *dest, uint8_t maxx) ;	// czyta tak długo, dopóki napotyka znaki drukowane
+uint8_t readLine(char *dest, uint8_t maxx) ;	// czyta tak długo, dopóki napotyka znaki drukowane
 
 void sendStringP(const char *strP) ;
 void sendString(const char *source) ;
@@ -97,6 +89,4 @@ inline void udrIntEnable()	{UCSRB |= (1 << UDRIE);}
 #endif
 
 
-
-}
 #endif /* USART_H_ */

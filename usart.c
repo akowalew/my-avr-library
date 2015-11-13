@@ -10,8 +10,7 @@
 
 #include "usart.h"
 
-namespace Usart
-{
+
 	void initUsart(USART_CHAR_SIZE bits ,
 					USART_PARITY parity,
 					uint8_t stopbits,
@@ -98,13 +97,13 @@ namespace Usart
 
 
 
-	bool checkErrors()
+	uint8_t checkErrors()
 	{
 	#ifdef __AVR_ATmega328P__
 		if((UCSRA & (1 << FE0)) || (UCSRA & (1 << DOR0)) || (UCSRA & (1 << UPE0)))
-			return false ;
+			return 0 ;
 		else
-			return true ;
+			return 1 ;
 	#else
 		if((UCSRA & (1 << FE)) || (UCSRA & (1 << DOR)) || (UCSRA & (1 << PE)))
 			return false ;
@@ -113,7 +112,7 @@ namespace Usart
 	#endif
 	}
 
-	bool isReceived()
+	uint8_t isReceived()
 	{
 	#ifdef __AVR_ATmega328P__
 		return UCSRA & (1 << RXC0);
@@ -122,7 +121,7 @@ namespace Usart
 	#endif
 	}
 
-	bool readLine(char *destination, uint8_t maxLen)
+	uint8_t readLine(char *destination, uint8_t maxLen)
 	{
 		char c ;
 		for(uint8_t i = 0 ; i < maxLen-1 ; i++)
@@ -131,12 +130,12 @@ namespace Usart
 			if(c == '\0' || c == '\n') // spacja + znaki drukowane
 			{
 				destination[i] = '\0' ;
-				return true ;
+				return 1 ;
 			}
 			destination[i] = c ;
 		}
 		destination[maxLen-1] = '\0' ;
-		return false ;
+		return 0 ;
 	}
 
 	void sendString(const char *source)
@@ -158,4 +157,4 @@ namespace Usart
 		}
 	}
 
-}
+
