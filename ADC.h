@@ -8,17 +8,14 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-namespace Adc
-{
-
-	enum V_REF
+	typedef enum
 	{
 		VREF_AREF = 0x00,	// AREF, Internal Vref turned off
 		VREF_AVCC = 0x01,  	// AVCC with external capacitor at AREF pin
 		VREF_INTERNAL= 0x03	// Internal 1.1V Voltage reference with external capacitor at AREF pin
-	};
+	} V_REF ;
 
-	enum PRESCALER
+	typedef enum
 	{
 		PS_2 = 0x01,
 		PS_4 = 0x02,
@@ -27,7 +24,7 @@ namespace Adc
 		PS_32 = 0x05,
 		PS_64 = 0x06,
 		PS_128 = 0x07
-	};
+	} PRESCALER ;
 
 	/*
 	 * By default, the successive approximation circuitry requires an input clock frequency
@@ -36,7 +33,7 @@ namespace Adc
 	 * to get a higher sample rate.
 	 */
 
-	enum ADC_AUTO_TRIGGER_SRC
+	typedef enum
 	{
 		TRG_FREE_RUN = 0x00,		// Free Running mode
 		TRG_ANA_COMP = 0x01,		// Analog Comparator
@@ -46,13 +43,13 @@ namespace Adc
 		TRG_TC1_COMP_MATCH_B = 0x05,// Timer/Counter1 Compare Match B
 		TRG_TC1_OVF = 0x06,			// Timer/Counter1 Overflow
 		TRG_TC1_CPT_EVENT = 0x07 	// Timer/Counter1 Capture event
-	};
+	} ADC_AUTO_TRIGGER_SRC ;
 
-	void adcInit(	V_REF v_ref = VREF_AVCC,
-			PRESCALER ps = PS_2,
-			bool toLeft = false) ;
+	void adcInit(	V_REF v_ref,
+			PRESCALER ps,
+			uint8_t  toLeft) ;
 
-	void setAutoTrigger(bool isSet, ADC_AUTO_TRIGGER_SRC src) ;
+	void setAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src) ;
 	void selectChannel(uint8_t channel) ;
 	void waitForEnd() ;
 	uint16_t getResult() ;
@@ -65,6 +62,6 @@ namespace Adc
 	inline void startConversion() 	{ ADCSRA |= (1 << ADSC) ; }
 
 	uint16_t singleRead();
-}
+
 
 #endif /* ADC_H_ */

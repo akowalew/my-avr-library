@@ -8,12 +8,9 @@
 #include <avr/io.h>
 #include "ADC.h"
 
-namespace Adc
-{
-
 	void adcInit(	V_REF v_ref,
 					PRESCALER ps,
-					bool toLeft)
+					uint8_t toLeft)
 	{
 		ADCSRA = (1 << ADEN) | ps ;
 		ADMUX = (v_ref << 6) ;
@@ -23,7 +20,7 @@ namespace Adc
 		selectChannel(0) ;
 	}
 
-	void setAutoTrigger(bool isSet, ADC_AUTO_TRIGGER_SRC src)
+	void setAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src)
 	{
 		ADCSRA &= ~(1 << ADATE) ;
 		ADCSRA |= (isSet << ADATE) ;
@@ -66,4 +63,4 @@ namespace Adc
 		return getResult() ;
 	}
 
-}
+
