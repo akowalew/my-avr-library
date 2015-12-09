@@ -10,17 +10,17 @@
 
 	void adcInit(	V_REF v_ref,
 					PRESCALER ps,
-					uint8_t toLeft)
+					ADC_RESULT_ALIGN toLeft)
 	{
 		ADCSRA = (1 << ADEN) | ps ;
 		ADMUX = (v_ref << 6) ;
 		if(toLeft)
 			ADMUX |= (1 << ADLAR) ;
 		adcEnable() ;
-		selectChannel(0) ;
+		adcSelectChannel(0) ;
 	}
 
-	void setAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src)
+	void adcSetAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src)
 	{
 		ADCSRA &= ~(1 << ADATE) ;
 		ADCSRA |= (isSet << ADATE) ;
@@ -36,19 +36,19 @@
 
 	}
 
-	void selectChannel(uint8_t channel)
+	void adcSelectChannel(uint8_t channel)
 	{
 		ADMUX &= ~((1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0)) ;
 		ADMUX |= channel ;
 	}
 
-	void waitForEnd()
+	void adcWaitForEnd()
 	{
 		while(!(ADCSRA & (1 << ADIF))) ; // czekaj na ustawienie bitu ADIF
 		ADCSRA |= (1 << ADIF) ; // wyzerowanie flagi ADIF
 	}
 
-	uint16_t getResult()
+	uint16_t adcGetResult()
 	{
 		if(ADMUX & (1 << ADLAR)) // result is shifted to left
 			return ADCH ;	// return only 8 oldest bits
@@ -56,11 +56,17 @@
 			return ADC ;	// return all of result
 	}
 
-	uint16_t singleRead()
+	uint16_t adcSingleRead()
 	{
-		startConversion() ;
-		waitForEnd() ;
-		return getResult() ;
+		adcStartConversion() ;
+		adcWaitForEnd() ;
+		return adcGetResult() ;
 	}
 
+	inline void adcIntEnable() 		{ ADCSRA |= (1 << ADIE) ; }
+	inline void adcIntDisable() 		{ ADCSRA &= ~(1 << ADIE) ; }
+
+	inline void adcEnable() 		{ ADCSRA |= (1 << ADEN) ; }
+	inline void adcDisable() 		{ ADCSRA &= ~(1 << ADEN) ; }
+	inline void adcStartConversion() 	{ ADCSRA |= (1 << ADSC) ; }
 

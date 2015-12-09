@@ -8,6 +8,8 @@
 #ifndef ADC_H_
 #define ADC_H_
 
+#include <avr/io.h>
+
 	typedef enum
 	{
 		VREF_AREF = 0x00,	// AREF, Internal Vref turned off
@@ -35,33 +37,38 @@
 
 	typedef enum
 	{
-		TRG_FREE_RUN = 0x00,		// Free Running mode
-		TRG_ANA_COMP = 0x01,		// Analog Comparator
-		TRG_EXT_INT0 = 0x02,		// External interrupt Request 0
+		TRG_FREE_RUN = 0x00,			// Free Running mode
+		TRG_ANA_COMP = 0x01,			// Analog Comparator
+		TRG_EXT_INT0 = 0x02,			// External interrupt Request 0
 		TRG_TC0_COMP_MATCH_A = 0x03,	// Timer/Counter0 Compare Match
-		TRG_TC0_OVF = 0x04,			// Timer/Counter0 Overflow
-		TRG_TC1_COMP_MATCH_B = 0x05,// Timer/Counter1 Compare Match B
-		TRG_TC1_OVF = 0x06,			// Timer/Counter1 Overflow
-		TRG_TC1_CPT_EVENT = 0x07 	// Timer/Counter1 Capture event
+		TRG_TC0_OVF = 0x04,				// Timer/Counter0 Overflow
+		TRG_TC1_COMP_MATCH_B = 0x05,	// Timer/Counter1 Compare Match B
+		TRG_TC1_OVF = 0x06,				// Timer/Counter1 Overflow
+		TRG_TC1_CPT_EVENT = 0x07 		// Timer/Counter1 Capture event
 	} ADC_AUTO_TRIGGER_SRC ;
+
+	typedef enum {
+		ALIGN_TO_LEFT = 0,
+		ALING_TO_RIGHT
+	} ADC_RESULT_ALIGN;
 
 	void adcInit(	V_REF v_ref,
 			PRESCALER ps,
-			uint8_t  toLeft) ;
+			ADC_RESULT_ALIGN  resultAlign) ;
 
-	void setAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src) ;
-	void selectChannel(uint8_t channel) ;
-	void waitForEnd() ;
-	uint16_t getResult() ;
+	void adcSetAutoTrigger(uint8_t isSet, ADC_AUTO_TRIGGER_SRC src) ;
+	void adcSelectChannel(uint8_t channel) ;
+	void adcWaitForEnd() ;
+	uint16_t adcGetResult() ;
 
-	inline void intEnable() 		{ ADCSRA |= (1 << ADIE) ; }
-	inline void intDisable() 		{ ADCSRA &= ~(1 << ADIE) ; }
+	void adcIntEnable() 		;
+	void adcIntDisable() 	;
 
-	inline void adcEnable() 		{ ADCSRA |= (1 << ADEN) ; }
-	inline void adcDisable() 		{ ADCSRA &= ~(1 << ADEN) ; }
-	inline void startConversion() 	{ ADCSRA |= (1 << ADSC) ; }
+	void adcEnable() ;
+	void adcDisable() ;
+	void adcStartConversion() ;
 
-	uint16_t singleRead();
+	uint16_t adcSingleRead();
 
 
 #endif /* ADC_H_ */
